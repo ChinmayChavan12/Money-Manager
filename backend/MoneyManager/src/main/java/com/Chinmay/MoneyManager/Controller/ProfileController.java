@@ -30,7 +30,9 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Activation Token not found or already used");
         }
     }
-
-
+    @GetMapping("/test")
+    public String greet(){
+        return "Hello World";
+    }
 }
 

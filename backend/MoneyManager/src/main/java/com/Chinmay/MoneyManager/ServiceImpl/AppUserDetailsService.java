@@ -1,4 +1,4 @@
-package com.Chinmay.MoneyManager.Service;
+package com.Chinmay.MoneyManager.ServiceImpl;
 
 import com.Chinmay.MoneyManager.Model.ProfileEntity;
 import com.Chinmay.MoneyManager.Repository.ProfileEntityRepository;
@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 
 @Service

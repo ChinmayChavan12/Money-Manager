@@ -1,9 +1,11 @@
-package com.Chinmay.MoneyManager.Service;
+package com.Chinmay.MoneyManager.ServiceImpl;
 
 import com.Chinmay.MoneyManager.IO.CategoryDTO;
 import com.Chinmay.MoneyManager.Model.CategoryEntity;
 import com.Chinmay.MoneyManager.Model.ProfileEntity;
 import com.Chinmay.MoneyManager.Repository.CategoryEntityRepository;
+import com.Chinmay.MoneyManager.Service.CategoryService;
+import com.Chinmay.MoneyManager.Service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO saveCategory(CategoryDTO categoryDTO) {
         ProfileEntity profile=profileService.getCurrentProfile();
-        if(categoryEntityRepository.existsByNameAndProfileId(categoryDTO.getCategoryName(), profile.getId())) {
+        if(categoryEntityRepository.existsByCategoryNameAndProfileId(categoryDTO.getCategoryName(), profile.getId())) {
             throw new RuntimeException("Category already exists");
         }
             CategoryEntity newCategory=toEntity(categoryDTO, profile);

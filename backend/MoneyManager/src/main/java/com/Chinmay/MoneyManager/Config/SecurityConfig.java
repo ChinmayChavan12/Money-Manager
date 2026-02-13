@@ -2,7 +2,7 @@ package com.Chinmay.MoneyManager.Config;
 
 
 import com.Chinmay.MoneyManager.Security.JwtFilter;
-import com.Chinmay.MoneyManager.Service.AppUserDetailsService;
+import com.Chinmay.MoneyManager.ServiceImpl.AppUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

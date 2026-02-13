@@ -1,4 +1,4 @@
-package com.Chinmay.MoneyManager.Service;
+package com.Chinmay.MoneyManager.ServiceImpl;
 
 import com.Chinmay.MoneyManager.IO.AuthRequest;
 import com.Chinmay.MoneyManager.IO.AuthResponse;
@@ -6,6 +6,8 @@ import com.Chinmay.MoneyManager.IO.ProfileRequest;
 import com.Chinmay.MoneyManager.IO.ProfileResponse;
 import com.Chinmay.MoneyManager.Model.ProfileEntity;
 import com.Chinmay.MoneyManager.Repository.ProfileEntityRepository;
+import com.Chinmay.MoneyManager.Service.EmailService;
+import com.Chinmay.MoneyManager.Service.ProfileService;
 import com.Chinmay.MoneyManager.Util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

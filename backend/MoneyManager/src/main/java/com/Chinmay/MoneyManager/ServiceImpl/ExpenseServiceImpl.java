@@ -99,6 +99,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         return list.stream().map(this::toDTO).toList();
     }
 
+    @Override
+    public List<ExpenseDTO> getExpensesForUserOnDate(Long profileId, LocalDate date) {
+        List<ExpenseEntity> list= expenseRepository.findByProfileIdAndDate(profileId, date);
+       return  list.stream().map(this::toDTO).toList();
+    }
 
 
 }

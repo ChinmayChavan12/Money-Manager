@@ -18,7 +18,7 @@ public class EmailServiceImpl implements EmailService {
     @Value("${spring.mail.properties.mail.smtp.from}")
     private String fromEmail;
 
-    public void sendActivationEmail(String to, String subject, String text) {
+    public void sendEmail(String to, String subject, String text) {
         try{
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);

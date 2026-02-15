@@ -40,7 +40,7 @@ public class ProfileServiceImpl implements ProfileService {
         String activationLink="http://localhost:8080/activate?token="+newProfileEntity.getActivationToken();
         String subject="Account Activation Email";
         String text="Click on the following link to activate your account: "+activationLink;
-        emailService.sendActivationEmail(newProfileEntity.getEmail(),subject,text);
+        emailService.sendEmail(newProfileEntity.getEmail(),subject,text);
         return toResponse(newProfileEntity);
 
     }

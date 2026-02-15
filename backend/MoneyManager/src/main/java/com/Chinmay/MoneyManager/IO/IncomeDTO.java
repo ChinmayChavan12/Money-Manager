@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,6 +21,7 @@ public class IncomeDTO {
     private Long categoryId;
     private BigDecimal amount;
     private LocalDate date;
-
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 }

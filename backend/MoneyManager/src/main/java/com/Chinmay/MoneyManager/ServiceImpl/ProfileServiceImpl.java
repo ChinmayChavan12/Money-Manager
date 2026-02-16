@@ -1,9 +1,6 @@
 package com.Chinmay.MoneyManager.ServiceImpl;
 
-import com.Chinmay.MoneyManager.IO.AuthRequest;
-import com.Chinmay.MoneyManager.IO.AuthResponse;
-import com.Chinmay.MoneyManager.IO.ProfileRequest;
-import com.Chinmay.MoneyManager.IO.ProfileResponse;
+import com.Chinmay.MoneyManager.IO.*;
 import com.Chinmay.MoneyManager.Model.ProfileEntity;
 import com.Chinmay.MoneyManager.Repository.ProfileEntityRepository;
 import com.Chinmay.MoneyManager.Service.EmailService;
@@ -11,14 +8,13 @@ import com.Chinmay.MoneyManager.Service.ProfileService;
 import com.Chinmay.MoneyManager.Util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,15 +29,15 @@ public class ProfileServiceImpl implements ProfileService {
     private final JwtUtil jwtUtil;
     private final AppUserDetailsService appUserDetailsService;
 
-    public ProfileResponse registerProfile(ProfileRequest profileRequest) {
-        ProfileEntity newProfileEntity = toEntity(profileRequest);
+    public ProfileDTO registerProfile(ProfileDTO profileDTO) {
+        ProfileEntity newProfileEntity = toEntity(profileDTO);
         newProfileEntity.setActivationToken(UUID.randomUUID().toString());
         newProfileEntity = profileEntityRepository.save(newProfileEntity);
         String activationLink="http://localhost:8080/activate?token="+newProfileEntity.getActivationToken();
         String subject="Account Activation Email";
         String text="Click on the following link to activate your account: "+activationLink;
         emailService.sendEmail(newProfileEntity.getEmail(),subject,text);
-        return toResponse(newProfileEntity);
+        return toDTO(newProfileEntity);
 
     }
 
@@ -49,7 +45,6 @@ public class ProfileServiceImpl implements ProfileService {
     public boolean activateProfile(String activationToken) {
         return  profileEntityRepository.findByActivationToken(activationToken).map(profileEntity ->{
             profileEntity.setIsActive(true);
-            profileEntity.setActivationToken(null);
             profileEntityRepository.save(profileEntity);
             return true;
         }).orElse(false);
@@ -57,7 +52,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Boolean isProfileActive(String email) {
-        return profileEntityRepository.findByActivationToken(email).map(ProfileEntity::getIsActive).orElse(false);
+        return profileEntityRepository.findByEmail(email) // query by email
+                .map(ProfileEntity::getIsActive)
+                .orElse(false);
     }
 
     @Override
@@ -67,7 +64,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileResponse getPublicProfile(String email) {
+    public ProfileDTO getPublicProfile(String email) {
         ProfileEntity currentUser=null;
         if(email==null){
           currentUser= getCurrentProfile();
@@ -75,7 +72,7 @@ public class ProfileServiceImpl implements ProfileService {
             currentUser=profileEntityRepository.findByEmail(email).orElseThrow(()->new RuntimeException("Profile Not Found with this email: "+email));
 
         }
-        return ProfileResponse.builder().name(currentUser.getName()).email(currentUser.getEmail()).isActive(currentUser.getIsActive()).build();
+        return ProfileDTO.builder().id(currentUser.getId()).name(currentUser.getName()).email(currentUser.getEmail()).profileImageUrl(currentUser.getProfileImageUrl()).createdAt(currentUser.getCreatedAt()).updatedAt(currentUser.getUpdatedAt()).build();
     }
 
     @Override
@@ -84,32 +81,39 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public AuthResponse authenticateAndGenerateToken(AuthRequest authRequest) {
-        try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
-            final UserDetails userDetails= appUserDetailsService.loadUserByUsername(authRequest.getEmail());
-            final String jwtToken= jwtUtil.generateToken(userDetails);
-            return new AuthResponse(jwtToken,userDetails.getUsername());
-        }catch (BadCredentialsException e){
-            throw new BadCredentialsException("Invalid Credentials");
+    public Map<String, Object> authenticateAndGenerateToken(AuthDTO authDTO) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword()));
+            //Generate JWT token
+            String token = jwtUtil.generateToken(authDTO.getEmail());
+            return Map.of(
+                    "token", token,
+                    "user", getPublicProfile(authDTO.getEmail())
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid email or password");
         }
-
     }
 
-    private ProfileResponse toResponse(ProfileEntity newProfileEntity) {
-        return ProfileResponse.builder()
+    private ProfileDTO toDTO(ProfileEntity newProfileEntity) {
+        return ProfileDTO.builder()
+                .id(newProfileEntity.getId())
                 .name(newProfileEntity.getName())
                 .email(newProfileEntity.getEmail())
-                .isActive(newProfileEntity.getIsActive())
+                .profileImageUrl(newProfileEntity.getProfileImageUrl())
+                .createdAt(newProfileEntity.getCreatedAt())
+                .updatedAt(newProfileEntity.getUpdatedAt())
                 .build();
     }
 
-    public ProfileEntity toEntity(ProfileRequest profileRequest){
-        return ProfileEntity.builder()
-                .name(profileRequest.getName())
-                .email(profileRequest.getEmail())
-                .password(passwordEncoder.encode(profileRequest.getPassword()))
-                .profileImageUrl(profileRequest.getProfileImageUrl())
+    public ProfileEntity toEntity(ProfileDTO profileDTO){
+        return ProfileEntity.builder().id(profileDTO.getId())
+                .name(profileDTO.getName())
+                .email(profileDTO.getEmail())
+                .password(passwordEncoder.encode(profileDTO.getPassword()))
+                .profileImageUrl(profileDTO.getProfileImageUrl())
+                .createdAt(profileDTO.getCreatedAt())
+                .updatedAt(profileDTO.getUpdatedAt())
                 .build();
     }
 

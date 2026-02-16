@@ -7,14 +7,16 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileResponse {
+@Builder
+public class ProfileDTO {
+    private Long id;
     private String name;
     private String email;
-    private Boolean isActive;
+    private String password;
+    private String profileImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

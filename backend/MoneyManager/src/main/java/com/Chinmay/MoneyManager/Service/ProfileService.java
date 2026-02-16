@@ -1,20 +1,18 @@
 package com.Chinmay.MoneyManager.Service;
 
-import com.Chinmay.MoneyManager.IO.AuthRequest;
-import com.Chinmay.MoneyManager.IO.AuthResponse;
-import com.Chinmay.MoneyManager.IO.ProfileRequest;
-import com.Chinmay.MoneyManager.IO.ProfileResponse;
+import com.Chinmay.MoneyManager.IO.*;
 import com.Chinmay.MoneyManager.Model.ProfileEntity;
 
+import java.util.Map;
 import java.util.Optional;
 
 public interface ProfileService {
-    ProfileResponse registerProfile(ProfileRequest profileRequest);
+    ProfileDTO registerProfile(ProfileDTO profileDTO);
     boolean activateProfile(String activationToken);
     Boolean isProfileActive(String email);
     ProfileEntity getCurrentProfile();
-    ProfileResponse getPublicProfile(String email);
+    ProfileDTO getPublicProfile(String email);
     Optional<ProfileEntity> getProfile(String email);
 
-    AuthResponse authenticateAndGenerateToken(AuthRequest authRequest);
+    Map<String,Object> authenticateAndGenerateToken(AuthDTO authDTO);
 }

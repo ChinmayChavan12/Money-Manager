@@ -1,10 +1,10 @@
 import React from 'react'
-
+import Dashboard from '../components/Dashboard'
 const Expense = () => {
   return (
-    <div>
-      Expense
-    </div>
+    <Dashboard activeMenu="Expense">
+      This is home page 
+     </Dashboard>
   )
 }
 

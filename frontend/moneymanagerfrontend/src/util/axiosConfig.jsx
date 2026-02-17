@@ -2,7 +2,7 @@ import axios from "axios"
 
 const axiosConfig=axios.create({
 
-    baseURL:"http://localhost:8080",
+    baseURL:"https://money-manager-1-ttq2.onrender.com",
     headers:{
         "Content-Type":"application/json",
         Accept:"application/json"

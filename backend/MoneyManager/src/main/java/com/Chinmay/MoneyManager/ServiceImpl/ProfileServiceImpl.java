@@ -7,6 +7,7 @@ import com.Chinmay.MoneyManager.Service.EmailService;
 import com.Chinmay.MoneyManager.Service.ProfileService;
 import com.Chinmay.MoneyManager.Util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,12 +29,14 @@ public class ProfileServiceImpl implements ProfileService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final AppUserDetailsService appUserDetailsService;
+    @Value("${app.activation.url}")
+    private String activationURL;
 
     public ProfileDTO registerProfile(ProfileDTO profileDTO) {
         ProfileEntity newProfileEntity = toEntity(profileDTO);
         newProfileEntity.setActivationToken(UUID.randomUUID().toString());
         newProfileEntity = profileEntityRepository.save(newProfileEntity);
-        String activationLink="http://localhost:8080/activate?token="+newProfileEntity.getActivationToken();
+        String activationLink=activationURL+"/activate?token="+newProfileEntity.getActivationToken();
         String subject="Account Activation Email";
         String text="Click on the following link to activate your account: "+activationLink;
         emailService.sendEmail(newProfileEntity.getEmail(),subject,text);

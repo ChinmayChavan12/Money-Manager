@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:8080";
+export const BASE_URL = "https://money-manager-1-ttq2.onrender.com";
 
 export const API_ENDPOINTS = {
     LOGIN: "/login",

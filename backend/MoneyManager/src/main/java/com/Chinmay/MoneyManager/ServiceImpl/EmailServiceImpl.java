@@ -30,7 +30,5 @@ public class EmailServiceImpl implements EmailService {
             throw new RuntimeException(e.getMessage());
         }
     }
-
-
 }
 
